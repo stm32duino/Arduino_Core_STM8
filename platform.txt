@@ -10,7 +10,7 @@ version=1.0.0
 
 # STM compile variables
 # ----------------------
-compiler.libstm.c.flags=-I "{build.system.path}/stm" -I "{build.system.path}/stm/include" -I "{build.system.path}/Drivers/STM8S_StdPeriph_Driver/inc/" -I "{build.core.path}/stm" -I "{build.core.path}/stm/STM8S_StdPeriph_Driver/inc" -I "{build.core.path}/stm/STM8S_StdPeriph_Driver"
+compiler.libstm.c.flags=-I "{build.system.path}/Drivers/STM8S_StdPeriph_Driver" -I "{build.system.path}/Drivers/STM8S_StdPeriph_Driver/inc/" -I "{build.system.path}/Drivers/STM8S_StdPeriph_Driver/src/" -I "{build.core.path}/avr" -I "{build.core.path}/stm/"
 
 
 compiler.warning_flags= 
