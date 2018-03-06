@@ -40,8 +40,8 @@
 #define __DIGITAL_IO_H
 
 /* Includes ------------------------------------------------------------------*/
+//#include "stm8s.h"
 #include "stm8s.h"
-
 #ifdef __cplusplus
  extern "C" {
 #endif

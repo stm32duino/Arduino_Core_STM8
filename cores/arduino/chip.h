@@ -22,17 +22,17 @@
 /*
  * Core and peripherals registers definitions
  */
-#include "libstm8s/hw_config.h"
-#include "libstm8s/digital_io.h"
-#include "libstm8s/clock.h"
-#include "libstm8s/stm8s_it.h"
-#include "libstm8s/uart.h"
-#include "libstm8s/analog.h"
-#include "libstm8s/timer.h"
-#include "libstm8s/com_spi.h"
-#include "libstm8s/stm8s_eeprom.h"
-#include "libstm8s/twi.h"
-#include "libstm8s/interrupt.h"
+#include "stm/hw_config.h"
+#include "stm/digital_io.h"
+#include "stm/clock.h"
+#include "stm/stm8s_it.h"
+#include "stm/uart.h"
+#include "stm/analog.h"
+#include "stm/timer.h"
+#include "stm/com_spi.h"
+#include "stm/stm8s_eeprom.h"
+#include "stm/twi.h"
+#include "stm/interrupt.h"
 
 /* Define attribute */
 #if defined (  __GNUC__  ) /* GCC CS3 */

@@ -21,7 +21,7 @@
 
 #include "WString.h"
 #include "itoa.h"
-#include "stm/dtostrf.h"
+#include "avr/dtostrf.h"
 
 /*********************************************/
 /*  Constructors                             */
