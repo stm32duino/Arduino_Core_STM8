@@ -1,0 +1,1 @@
+#include "stm8s_spi.c"

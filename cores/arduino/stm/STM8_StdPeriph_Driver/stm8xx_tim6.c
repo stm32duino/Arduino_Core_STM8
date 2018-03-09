@@ -1,0 +1,1 @@
+#include "stm8s_tim6.c"

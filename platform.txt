@@ -10,7 +10,7 @@ version=1.0.0
 
 # STM compile variables
 # ----------------------
-compiler.libstm.c.flags=-I "{build.system.path}/Drivers/STM8S_StdPeriph_Driver" -I "{build.system.path}/Drivers/STM8S_StdPeriph_Driver/inc/" -I "{build.system.path}/Drivers/STM8S_StdPeriph_Driver/src/" -I "{build.core.path}/avr" -I "{build.core.path}/stm/"
+compiler.libstm.c.flags=-I "{build.source.path}" -I "{build.system.path}\Drivers\STM8S_StdPeriph_Driver" -I "{build.system.path}\Drivers\STM8S_StdPeriph_Driver\inc\" -I "{build.system.path}\Drivers\STM8S_StdPeriph_Driver\src\" -I "{build.core.path}\stm\"
 
 
 compiler.warning_flags= 
@@ -52,6 +52,7 @@ compiler.S.extra_flags=
 compiler.ar.extra_flags=
 compiler.sm82hex.extra_flags=
 
+# ----------------------
 
 # USB Flags
 # ---------
