@@ -1,0 +1,28 @@
+# See: http://code.google.com/p/arduino/wiki/Platforms
+
+################################################################################
+# STM8S-Discovery board
+
+STM8S-Discovery.name=STM8S-Discovery
+
+#STM8S-Discovery.vid.0=0x0483
+#STM8S-Discovery.pid.0=0x374b
+
+# Must be the exact same name as in STVP
+STM8S-Discovery.device=STM8S105x6
+
+STM8S-Discovery.upload.tool=stm8Flasher
+STM8S-Discovery.upload.protocol=stm8Tools
+STM8S-Discovery.upload.maximum_size=32768
+STM8S-Discovery.upload.maximum_data_size=2048
+
+STM8S-Discovery.build.mcu=8-bit
+STM8S-Discovery.build.board=STM8S_Discovery
+STM8S-Discovery.build.core=arduino
+#STM8S-Discovery.build.ldscript=
+STM8S-Discovery.build.variant=STM8S105C6-Discovery
+#STM8S-Discovery.build.variant_system_lib=libstm8s_stm8s105c6-discovery_cxppstm8_rel.sm8
+STM8S-Discovery.build.extra_flags=-d STM8S105
+STM8S-Discovery.build.f_cpu=16000000
+
+################################################################################

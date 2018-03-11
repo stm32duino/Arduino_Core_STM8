@@ -1,0 +1,1 @@
+#include "stm8s_adc2.c"
