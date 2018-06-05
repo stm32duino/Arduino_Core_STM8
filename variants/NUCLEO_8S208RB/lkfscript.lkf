@@ -1,0 +1,28 @@
+#	link command file for STM8S105C6
+#	Copyright (c) 2017 by COSMIC Software
+#
++seg .vector -b0x8000 -m0x8000 -n .vector -cs code -k	# interrupt and rest vectors
++seg .const -a .vector -n .const			# constants follow vectors
++seg ._construct_ -a .const -n .construct -k		# constructor table
++seg .text -a .construct -n .text			# code follow constants
++seg .eeprom -b 0x4000 -m 0x800	-cs eeprom		# internal eeprom
++seg .bsct -b 0x0 -m 0x100 -n .bsct -cs data		# internal ram
++seg .ubsct -a .bsct -n .ubsct
++seg .bit -a .ubsct -n .bit -id
++seg .data -a .bit -m 0x1300 -n .data
++seg .bss -a .data -n .bss
+crtspi0.sm8
+@*
+libcppsl0.sm8
+libfsl0.sm8
+libisl0.sm8
+libll.sm8
+libm0.sm8
++def __memory=@.bss
++def __endzp=@.ubsct
++def __stack=0x17ff
++def __startmem=@.bss
++spc .bss=0x100
++def __endmem=@.bss
++def __ctorstart=start(.construct)
++def __ctorend=end(.construct)
