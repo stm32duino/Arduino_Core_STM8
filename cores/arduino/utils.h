@@ -6,7 +6,7 @@
 // Concatenate 2 strings
 #define CONCAT(s1, s2) (s1 s2)
 // Concatenate 2 strings separated by space
-#define CONCATS(s1, s2) (s1" " s2)
+#define CONCATS(s1, s2) (s1 " " s2)
 
 // Stringification
 #define xstr(s) str(s)

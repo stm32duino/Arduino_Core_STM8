@@ -18,20 +18,27 @@
 
 #include <stdlib.h>
 
-extern "C" void __cxa_pure_virtual(void) __attribute__ ((__noreturn__));
-extern "C" void __cxa_deleted_virtual(void) __attribute__ ((__noreturn__));
+#ifdef __CSMC__
+#define __noreturn __attribute__((noreturn))
+extern "C" __noreturn void __cxa_pure_virtual(void);
+extern "C" __noreturn void __cxa_deleted_virtual(void);
+#else
+extern "C" void __cxa_pure_virtual(void) __attribute__((__noreturn__));
+extern "C" void __cxa_deleted_virtual(void) __attribute__((__noreturn__));
+#endif
 
-void __cxa_pure_virtual(void) {
+void __cxa_pure_virtual(void)
+{
   // We might want to write some diagnostics to uart in this case
   //std::terminate();
   while (1)
     ;
 }
 
-void __cxa_deleted_virtual(void) {
+void __cxa_deleted_virtual(void)
+{
   // We might want to write some diagnostics to uart in this case
   //std::terminate();
   while (1)
     ;
 }
-

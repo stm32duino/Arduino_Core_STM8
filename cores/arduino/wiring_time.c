@@ -19,30 +19,32 @@
 #include "Arduino.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-uint32_t millis( void )
-{
-  // todo: ensure no interrupts
-  return GetCurrentMilli() ;
-}
+  uint32_t millis(void)
+  {
+    // todo: ensure no interrupts
+    return GetCurrentMilli();
+  }
 
-// Interrupt-compatible version of micros
-uint32_t micros( void )
-{
- return GetCurrentMicro();
-}
+  // Interrupt-compatible version of micros
+  uint32_t micros(void)
+  {
+    return GetCurrentMicro();
+  }
 
-void delay( uint32_t ms )
-{
-  if (ms == 0)
+  void delay(uint32_t ms)
+  {
+    if (ms == 0)
       return;
-  uint32_t start = GetCurrentMilli();
-  do {
+    uint32_t start = GetCurrentMilli();
+    do
+    {
       yield();
-  } while (GetCurrentMilli() - start < ms);
-}
+    } while (GetCurrentMilli() - start < ms);
+  }
 
 #ifdef __cplusplus
 }

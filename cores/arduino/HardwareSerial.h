@@ -45,19 +45,20 @@
 #if !defined(SERIAL_RX_BUFFER_SIZE)
 #define SERIAL_RX_BUFFER_SIZE 64
 #endif
-#if (SERIAL_TX_BUFFER_SIZE>256)
+#if (SERIAL_TX_BUFFER_SIZE > 256)
 typedef uint16_t tx_buffer_index_t;
 #else
 typedef uint8_t tx_buffer_index_t;
 #endif
-#if  (SERIAL_RX_BUFFER_SIZE>256)
+#if (SERIAL_RX_BUFFER_SIZE > 256)
 typedef uint16_t rx_buffer_index_t;
 #else
 typedef uint8_t rx_buffer_index_t;
 #endif
 
+
 // Define config for Serial.begin(baud, config);
-// below configs are not supported by STM32
+// below configs are not supported by STM8
 //#define SERIAL_5N1 0x00
 //#define SERIAL_5N2 0x08
 //#define SERIAL_5E1 0x20
@@ -125,9 +126,8 @@ class HardwareSerial : public Stream
     void setRx(PinName _rx);
     void setTx(PinName _tx);
 
-    // Interrupt handlers
+  // Interrupt handlers
     static void _rx_complete_irq(serial_t* obj);
-    static int _tx_complete_irq(serial_t* obj);
   private:
     void init(void);
 };
@@ -135,14 +135,23 @@ class HardwareSerial : public Stream
 extern HardwareSerial Serial1;
 extern HardwareSerial Serial2;
 extern HardwareSerial Serial3;
-extern HardwareSerial Serial4;
-extern HardwareSerial Serial5;
-extern HardwareSerial Serial6;
-extern HardwareSerial Serial7;
-extern HardwareSerial Serial8;
-extern HardwareSerial Serial9;
-extern HardwareSerial Serial10;
 
+#ifdef __CSMC__
+extern void serialEventRun(void);
+#if defined(HAVE_HWSERIAL1)
+extern void serialEvent1(void);
+#endif
+#if defined(HAVE_HWSERIAL2)
+extern void serialEvent2(void);
+#endif
+#if defined(HAVE_HWSERIAL3)
+extern void serialEvent3(void);
+#endif
+#if defined(HAVE_HWSERIAL4)
+extern void serialEvent4(void);
+#endif
+#else
 extern void serialEventRun(void) __attribute__((weak));
+#endif
 
 #endif

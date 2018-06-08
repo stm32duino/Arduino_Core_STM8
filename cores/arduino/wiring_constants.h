@@ -22,26 +22,41 @@
 #include <stdbool.h>
 
 #ifdef __cplusplus
-#include <algorithm>
-using std::min;
-using std::max;
-#else // C
+
+#ifdef __CSMC__
 #ifndef abs
-#define abs(x) ((x)>0?(x):-(x))
+#define abs(x) ((x) > 0 ? (x) : -(x))
 #endif // abs
 
 #ifndef min
-#define min(a,b) ((a)<(b)?(a):(b))
+#define min(a, b) ((a) < (b) ? (a) : (b))
 #endif // min
 
 #ifndef max
-#define max(a,b) ((a)>(b)?(a):(b))
+#define max(a, b) ((a) > (b) ? (a) : (b))
+#endif // max
+#else
+#include <algorithm>
+using std::max;
+using std::min;
+#endif
+#else // C
+#ifndef abs
+#define abs(x) ((x) > 0 ? (x) : -(x))
+#endif // abs
+
+#ifndef min
+#define min(a, b) ((a) < (b) ? (a) : (b))
+#endif // min
+
+#ifndef max
+#define max(a, b) ((a) > (b) ? (a) : (b))
 #endif // max
 
 #endif // __cplusplus
 
 #define HIGH 0x1
-#define LOW  0x0
+#define LOW 0x0
 
 #define INPUT 0x0
 #define OUTPUT 0x1
@@ -55,12 +70,13 @@ using std::max;
 #define RAD_TO_DEG 57.295779513082320876798154814105
 #define EULER 2.718281828459045235360287471352
 
-#define SERIAL  0x0
+#define SERIAL 0x0
 #define DISPLAY 0x1
 
-enum BitOrder {
-	LSBFIRST = 0,
-	MSBFIRST = 1
+enum BitOrder
+{
+  LSBFIRST = 0,
+  MSBFIRST = 1
 };
 
 //      LOW 0
@@ -72,17 +88,17 @@ enum BitOrder {
 #define DEFAULT 1
 #define EXTERNAL 0
 
-#define constrain(amt,low,high) ((amt)<(low)?(low):((amt)>(high)?(high):(amt)))
+#define constrain(amt, low, high) ((amt) < (low) ? (low) : ((amt) > (high) ? (high) : (amt)))
 
 #define radians(deg) ((deg)*DEG_TO_RAD)
 #define degrees(rad) ((rad)*RAD_TO_DEG)
-#define sq(x) ((x)*(x))
+#define sq(x) ((x) * (x))
 
 #define interrupts() __enable_irq()
 #define noInterrupts() __disable_irq()
 
-#define lowByte(w) ((uint8_t) ((w) & 0xff))
-#define highByte(w) ((uint8_t) ((w) >> 8))
+#define lowByte(w) ((uint8_t)((w)&0xff))
+#define highByte(w) ((uint8_t)((w) >> 8))
 
 #define bitRead(value, bit) (((value) >> (bit)) & 0x01)
 #define bitSet(value, bit) ((value) |= (1UL << (bit)))
@@ -103,8 +119,8 @@ enum BitOrder {
 
 typedef unsigned int word;
 
-typedef bool boolean ;
+typedef bool boolean;
 
-typedef uint8_t byte ;
+typedef uint8_t byte;
 
 #endif /* _WIRING_CONSTANTS_ */

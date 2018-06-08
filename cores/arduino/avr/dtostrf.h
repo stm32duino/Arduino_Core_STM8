@@ -21,10 +21,11 @@
 #define __DTOSTRF_H_ 1
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-char *dtostrf (double val, signed char width, unsigned char prec, char *sout);
+  char *dtostrf(double val, signed char width, unsigned char prec, char *sout);
 
 #ifdef __cplusplus
 }

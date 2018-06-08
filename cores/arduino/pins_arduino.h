@@ -20,11 +20,9 @@
 // Include board variant
 #include "variant.h"
 
-// Avoid pins number misalignment
-_Static_assert(NUM_DIGITAL_PINS==PEND, "NUM_DIGITAL_PINS and PEND differ!");
 
 // Arduino digital pins alias
-// GPIO port (A to K) * 16 pins: 176
+// GPIO port (A to G) * 16 pins: 53
 enum {
   D0,   D1,   D2,   D3,   D4,   D5,   D6,   D7,   D8,   D9,
   D10,  D11,  D12,  D13,  D14,  D15,  D16,  D17,  D18,  D19,
@@ -32,30 +30,14 @@ enum {
   D30,  D31,  D32,  D33,  D34,  D35,  D36,  D37,  D38,  D39,
   D40,  D41,  D42,  D43,  D44,  D45,  D46,  D47,  D48,  D49,
   D50,  D51,  D52,  D53,  D54,  D55,  D56,  D57,  D58,  D59,
-  D60,  D61,  D62,  D63,  D64,  D65,  D66,  D67,  D68,  D69,
-  D70,  D71,  D72,  D73,  D74,  D75,  D76,  D77,  D78,  D79,
-  D80,  D81,  D82,  D83,  D84,  D85,  D86,  D87,  D88,  D89,
-  D90,  D91,  D92,  D93,  D94,  D95,  D96,  D97,  D98,  D99,
-  D100, D101, D102, D103, D104, D105, D106, D107, D108, D109,
-  D110, D111, D112, D113, D114, D115, D116, D117, D118, D119,
-  D120, D121, D122, D123, D124, D125, D126, D127, D128, D129,
-  D130, D131, D132, D133, D134, D135, D136, D137, D138, D139,
-  D140, D141, D142, D143, D144, D145, D146, D147, D148, D149,
-  D150, D151, D152, D153, D154, D155, D156, D157, D158, D159,
-  D160, D161, D162, D163, D164, D165, D166, D167, D168, D169,
-  D170, D171, D172, D173, D174, D175,
+  D60,  D61,  D62,  D63,  D64,
   DMAX
 };
 
 // Arduino analog pins
 // Analog pins must be contiguous to be able to loop on each value
-#define MAX_ANALOG_INPUTS 20
-_Static_assert(NUM_ANALOG_INPUTS <= MAX_ANALOG_INPUTS,
-               "Core NUM_ANALOG_INPUTS limited to MAX_ANALOG_INPUTS" );
-_Static_assert(NUM_ANALOG_FIRST >= NUM_ANALOG_INPUTS,
-               "First analog pin value (A0) must be greater than or equal to NUM_ANALOG_INPUTS" );
+#define MAX_ANALOG_INPUTS 6
 
-// Defined for backward compatibility with Firmata which unfortunately use it
 #define AEND (NUM_ANALOG_FIRST+NUM_ANALOG_INPUTS)
 
 #if NUM_ANALOG_INPUTS > 0
@@ -81,62 +63,6 @@ static const uint8_t A4 = PIN_A4;
 #if NUM_ANALOG_INPUTS > 5
 #define PIN_A5       (PIN_A4 + 1)
 static const uint8_t A5 = PIN_A5;
-#endif
-#if NUM_ANALOG_INPUTS > 6
-#define PIN_A6       (PIN_A5 + 1)
-static const uint8_t A6 = PIN_A6;
-#endif
-#if NUM_ANALOG_INPUTS > 7
-#define PIN_A7       (PIN_A6 + 1)
-static const uint8_t A7 = PIN_A7;
-#endif
-#if NUM_ANALOG_INPUTS > 8
-#define PIN_A8       (PIN_A7 + 1)
-static const uint8_t A8 = PIN_A8;
-#endif
-#if NUM_ANALOG_INPUTS > 9
-#define PIN_A9       (PIN_A8 + 1)
-static const uint8_t A9 = PIN_A9;
-#endif
-#if NUM_ANALOG_INPUTS > 10
-#define PIN_A10      (PIN_A9 + 1)
-static const uint8_t A10 = PIN_A10;
-#endif
-#if NUM_ANALOG_INPUTS > 11
-#define PIN_A11      (PIN_A10 + 1)
-static const uint8_t A11 = PIN_A11;
-#endif
-#if NUM_ANALOG_INPUTS > 12
-#define PIN_A12      (PIN_A11 + 1)
-static const uint8_t A12 = PIN_A12;
-#endif
-#if NUM_ANALOG_INPUTS > 13
-#define PIN_A13      (PIN_A12 + 1)
-static const uint8_t A13 = PIN_A13;
-#endif
-#if NUM_ANALOG_INPUTS > 14
-#define PIN_A14      (PIN_A13 + 1)
-static const uint8_t A14 = PIN_A14;
-#endif
-#if NUM_ANALOG_INPUTS > 15
-#define PIN_A15      (PIN_A14 + 1)
-static const uint8_t A15 = PIN_A15;
-#endif
-#if NUM_ANALOG_INPUTS > 16
-#define PIN_A16      (PIN_A15 + 1)
-static const uint8_t A16 = PIN_A16;
-#endif
-#if NUM_ANALOG_INPUTS > 17
-#define PIN_A17      (PIN_A16 + 1)
-static const uint8_t A17 = PIN_A17;
-#endif
-#if NUM_ANALOG_INPUTS > 18
-#define PIN_A18      (PIN_A17 + 1)
-static const uint8_t A18 = PIN_A18;
-#endif
-#if NUM_ANALOG_INPUTS > 19
-#define PIN_A19      (PIN_A18 + 1)
-static const uint8_t A19 = PIN_A19;
 #endif
 
 // Default for Arduino connector compatibility
@@ -220,24 +146,6 @@ uint32_t pinNametoDigitalPin(PinName p);
 #define portOutputRegister(P)       (&(P->ODR))
 #define portInputRegister(P)        (&(P->IDR))
 
-#define portSetRegister(P)          (&(P->BSRR))
-#if defined(STM32F2xx) || defined(STM32F4xx) || defined(STM32F7xx)
-// For those series reset are in the high part so << 16U needed
-#define portClearRegister(P)        (&(P->BSRR))
-#else
-#define portClearRegister(P)        (&(P->BRR))
-#endif
-
-
-#if defined(STM32F1xx)
-// Config registers split in 2 registers:
-// CRL: pin 0..7
-// CRH: pin 8..15
-// Return only CRL
-#define portModeRegister(P)         (&(P->CRL))
-#else
-#define portModeRegister(P)         (&(P->MODER))
-#endif
 #define portConfigRegister(P)       (portModeRegister(P))
 
 
@@ -253,7 +161,6 @@ uint32_t pinNametoDigitalPin(PinName p);
 #define pinIsSerial(p)              ((digitalPinFirstOccurence(p) == PIN_SERIAL_RX) ||\
                                      (digitalPinFirstOccurence(p) == PIN_SERIAL_TX))
 #endif
-
 #ifdef __cplusplus
 }
 #endif

@@ -22,7 +22,20 @@
 #include <stdlib.h>
 #include <string.h>
 
-char *dtostrf (double val, signed char width, unsigned char prec, char *sout) {
+char *stm8_strdup(char *src) {
+  char *str;
+  char *p;
+  size_t len = strlen(src);
+
+  str = malloc(len + 1);
+  if (str) {
+    memcpy(str, src, len + 1);
+  }
+  return str;
+}
+
+char *dtostrf(double val, signed char width, unsigned char prec, char *sout)
+{
   //Commented code is the original version
   /*char fmt[20];
   sprintf(fmt, "%%%d.%df", width, prec);
@@ -33,13 +46,14 @@ char *dtostrf (double val, signed char width, unsigned char prec, char *sout) {
   unsigned int negative = 0;
   if (val < 0.0)
   {
-     negative = 1;
-     val = -val;
+    negative = 1;
+    val = -val;
   }
 
   // Round correctly so that print(1.999, 2) prints as "2.00"
   double rounding = 0.5;
-  for (int i=0; i<prec; ++i)
+  int i;
+  for (i = 0; i < prec; ++i)
     rounding /= 10.0;
 
   val += rounding;
@@ -48,16 +62,16 @@ char *dtostrf (double val, signed char width, unsigned char prec, char *sout) {
   unsigned long int_part = (unsigned long)val;
   double remainder = val - (double)int_part;
 
-  if(negative)
+  if (negative)
     int_part = -int_part;
 
   // Extract digits from the remainder
   unsigned long dec_part = 0;
   double decade = 1.0;
-  for(int i=0; i < prec; i++)
+  for (i = 0; i < prec; i++)
     decade *= 10.0;
   remainder *= decade;
-  dec_part = (int)remainder;
+  dec_part = (unsigned long)remainder;
 
   sprintf(sout, "%ld.%ld", int_part, dec_part);
 
@@ -76,8 +90,8 @@ char *dtostrf (double val, signed char width, unsigned char prec, char *sout) {
   if(strlen(sout) < w) {
     memset(fmt, ' ', 128);
     fmt[w-strlen(sout)] = '\0';
-	if(negative == 0) {
-      char *tmp = strdup(sout);
+    if(negative == 0) {
+      char *tmp = stm8_strdup(sout);
       strcpy(sout,fmt);
       strcat(sout, tmp);
       free(tmp);

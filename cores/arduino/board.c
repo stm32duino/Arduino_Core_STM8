@@ -1,15 +1,16 @@
 #include "board.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
-void __libc_init_array(void);
+  void __libc_init_array(void);
 
-WEAK void init( void )
-{
-  hw_config_init();
-}
+  void init(void)
+  {
+    hw_config_init();
+  }
 
 #ifdef __cplusplus
 }

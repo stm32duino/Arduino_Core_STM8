@@ -19,20 +19,28 @@
 #include "pins_arduino.h"
 
 #ifdef __cplusplus
-extern "C" {
+extern "C"
+{
 #endif
 
+#ifdef __CSMC__
+#pragma weak pinNametoDigitalPin
+  uint32_t pinNametoDigitalPin(PinName p)
+#else
 WEAK uint32_t pinNametoDigitalPin(PinName p)
-{
-  uint32_t i = NC;
-  if(STM_VALID_PINNAME(p)) {
-    for(i = 0; i < NUM_DIGITAL_PINS; i++) {
-      if (digitalPin[i] == p)
-        break;
+#endif
+  {
+    uint32_t i = NC;
+    if (STM_VALID_PINNAME(p))
+    {
+      for (i = 0; i < NUM_DIGITAL_PINS; i++)
+      {
+        if (digitalPin[i] == p)
+          break;
+      }
     }
+    return i;
   }
-  return i;
-}
 
 #ifdef __cplusplus
 }

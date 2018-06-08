@@ -20,18 +20,19 @@
 #define _WIRING_DIGITAL_
 
 #ifdef __cplusplus
- extern "C" {
+extern "C"
+{
 #endif
 
-/**
+  /**
  * \brief Configures the specified pin to behave either as an input or an output. See the description of digital pins for details.
  *
  * \param ulPin The number of the pin whose mode you wish to set
  * \param ulMode Either INPUT or OUTPUT
  */
-extern void pinMode( uint32_t dwPin, uint32_t dwMode ) ;
+  extern void pinMode(uint32_t dwPin, uint32_t dwMode);
 
-/**
+  /**
  * \brief Write a HIGH or a LOW value to a digital pin.
  *
  * If the pin has been configured as an OUTPUT with pinMode(), its voltage will be set to the
@@ -51,16 +52,16 @@ extern void pinMode( uint32_t dwPin, uint32_t dwMode ) ;
  * \param dwPin the pin number
  * \param dwVal HIGH or LOW
  */
-extern void digitalWrite( uint32_t dwPin, uint32_t dwVal ) ;
+  extern void digitalWrite(uint32_t dwPin, uint32_t dwVal);
 
-/**
+  /**
  * \brief Reads the value from a specified digital pin, either HIGH or LOW.
  *
  * \param ulPin The number of the digital pin you want to read (int)
  *
  * \return HIGH or LOW
  */
-extern int digitalRead( uint32_t ulPin ) ;
+  extern int digitalRead(uint32_t ulPin);
 
 #ifdef __cplusplus
 }

@@ -21,29 +21,23 @@
 
 #include "Arduino.h"
 
-PinName g_lastPin = NC;
-static stimer_t _timer;
+uint8_t g_lastPin = NUM_DIGITAL_PINS;
 
 // frequency (in hertz) and duration (in milliseconds).
 
 void tone(uint8_t _pin, unsigned int frequency, unsigned long duration)
 {
-  PinName p = digitalPinToPinName(_pin);
-  if(p != NC) {
-    if((g_lastPin == NC) || (g_lastPin == p)) {
-      _timer.pin = p;
-      TimerPinInit(&_timer, frequency, duration);
-      g_lastPin = p;
-    }
+
+  if ((g_lastPin == NUM_DIGITAL_PINS) || (g_lastPin == _pin))
+  {
+    TimerPinInit(_pin, frequency, duration);
+    g_lastPin = _pin;
   }
 }
 
-
 void noTone(uint8_t _pin)
 {
-  PinName p = digitalPinToPinName(_pin);
-  if(p != NC) {
-    TimerPinDeinit(&_timer);
-    g_lastPin = NC;
-  }
+  TimerPinDeinit(_pin);
+  digitalWrite((uint32_t)_pin, 0);
+  g_lastPin = NUM_DIGITAL_PINS;
 }

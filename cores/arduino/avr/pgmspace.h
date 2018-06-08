@@ -26,7 +26,7 @@
 #include <inttypes.h>
 
 #define PROGMEM
-#define PGM_P  const char *
+#define PGM_P const char *
 #define PSTR(str) (str)
 
 #define _SFR_BYTE(n) (n)
@@ -40,8 +40,6 @@ typedef int16_t prog_int16_t;
 typedef uint16_t prog_uint16_t;
 typedef int32_t prog_int32_t;
 typedef uint32_t prog_uint32_t;
-typedef int64_t prog_int64_t;
-typedef uint64_t prog_uint64_t;
 
 #define memchr_P(str, c, len) memchr((str), (c), (len))
 #define memcmp_P(a, b, n) memcmp((a), (b), (n))
@@ -91,28 +89,27 @@ typedef uint64_t prog_uint64_t;
 #define strlcpy_PF(dest, src, n) strlcpy((dest), (src), (n))
 #define memcmp_PF(s1, s2, n) memcmp((s1), (s2), (n))
 
-
 #define pgm_read_byte(addr) (*(const unsigned char *)(addr))
 #if 0
 #define pgm_read_word(addr) (*(const unsigned short *)(addr))
 #define pgm_read_dword(addr) (*(const unsigned long *)(addr))
 #define pgm_read_float(addr) (*(const float *)(addr))
 #else
-#define pgm_read_word(addr) ({ \
-	typeof(addr) _addr = (addr); \
+#define pgm_read_word(addr) ({        \
+	typeof(addr) _addr = (addr);      \
 	*(const unsigned short *)(_addr); \
 })
-#define pgm_read_dword(addr) ({ \
-	typeof(addr) _addr = (addr); \
+#define pgm_read_dword(addr) ({      \
+	typeof(addr) _addr = (addr);     \
 	*(const unsigned long *)(_addr); \
 })
-#define pgm_read_float(addr) ({ \
+#define pgm_read_float(addr) ({  \
 	typeof(addr) _addr = (addr); \
-	*(const float *)(_addr); \
+	*(const float *)(_addr);     \
 })
-#define pgm_read_ptr(addr) ({ \
+#define pgm_read_ptr(addr) ({    \
 	typeof(addr) _addr = (addr); \
-	*(void * const *)(_addr); \
+	*(void *const *)(_addr);     \
 })
 #endif
 

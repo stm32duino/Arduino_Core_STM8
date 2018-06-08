@@ -15,7 +15,6 @@
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
 /**
  * Empty yield() hook.
  *
@@ -25,10 +24,13 @@
  * Its defined as a weak symbol and it can be redefined to implement a
  * real cooperative scheduler.
  */
-static void __empty() {
-	// Empty
+
+
+#pragma weak yield
+void yield(void){
+  __asm("NOP");
 }
-void yield(void) __attribute__ ((weak, alias("__empty")));
+
 
 /**
  * SysTick hook
@@ -36,11 +38,18 @@ void yield(void) __attribute__ ((weak, alias("__empty")));
  * This function is called from SysTick handler, before the default
  * handler provided by Arduino.
  */
-static int __false() {
-	// Return false
-	return 0;
+static int __false()
+{
+  // Return false
+  return 0;
 }
-int sysTickHook(void) __attribute__ ((weak, alias("__false")));
+
+#ifdef __CSMC__
+int sysTickHook(void);
+#pragma sysTickHook = __false
+#else
+int sysTickHook(void) __attribute__((weak, alias("__false")));
+#endif
 
 /**
  * SVC hook
@@ -49,10 +58,19 @@ int sysTickHook(void) __attribute__ ((weak, alias("__false")));
  * These functions are called from SVC handler, and PensSV handler.
  * Default action is halting.
  */
-static void __halt() {
-	// Halts
-	while (1)
-		;
+static void __halt()
+{
+  // Halts
+  while (1)
+    ;
 }
-void svcHook(void)    __attribute__ ((weak, alias("__halt")));
-void pendSVHook(void) __attribute__ ((weak, alias("__halt")));
+
+#ifdef __CSMC__
+void svcHook(void);
+#pragma weak svcHook = __halt
+void pendSVHook(void);
+#pragma weak pendSVHook = __halt
+#else
+void svcHook(void) __attribute__((weak, alias("__halt")));
+void pendSVHook(void) __attribute__((weak, alias("__halt")));
+#endif
