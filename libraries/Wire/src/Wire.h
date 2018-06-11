@@ -30,79 +30,61 @@
 
 #define MASTER_ADDRESS 0x33
 
-// WIRE_HAS_END means Wire has end()
-#define WIRE_HAS_END 1
-
 class TwoWire : public Stream
 {
-  private:
-    static uint8_t *rxBuffer;
-    static uint8_t rxBufferAllocated;
-    static uint8_t rxBufferIndex;
-    static uint8_t rxBufferLength;
+private:
+  uint8_t rxBuffer[BUFFER_LENGTH];
+  uint8_t rxBufferIndex;
+  uint8_t rxBufferLength;
 
-    static uint8_t txAddress;
-    static uint8_t *txBuffer;
-    static uint8_t txBufferAllocated;
-    static uint8_t txBufferIndex;
-    static uint8_t txBufferLength;
+  uint8_t txAddress;
+  uint8_t txBuffer[BUFFER_LENGTH];
+  uint8_t txBufferIndex;
+  uint8_t txBufferLength;
 
-    static uint8_t transmitting;
+  uint8_t transmitting;
 
-    uint8_t ownAddress;
-    bool master;
-    i2c_t _i2c;
+  uint8_t ownAddress;
+  bool master;
+  i2c_t _i2c;
 
-    static void (*user_onRequest)(void);
-    static void (*user_onReceive)(int);
-    static void onRequestService(void);
-    static void onReceiveService(uint8_t*, int);
+  static void (*user_onRequest)(void);
+  static void (*user_onReceive)(int);
+  static void onRequestService(void);
+  static void onReceiveService(uint8_t *, int);
 
-    static void allocateRxBuffer(size_t length);
-    void allocateTxBuffer(size_t length);
+public:
+  TwoWire();
+  TwoWire(uint8_t sda, uint8_t scl);
+  void begin();
+  void begin(uint8_t);
+  void begin(int);
+  void end();
+  void setClock(uint32_t);
+  void beginTransmission(uint8_t);
+  void beginTransmission(int);
+  uint8_t endTransmission(void);
+  uint8_t endTransmission(uint8_t);
+  uint8_t requestFrom(uint8_t, uint8_t);
+  uint8_t requestFrom(uint8_t, uint8_t, uint8_t);
+  uint8_t requestFrom(uint8_t, uint8_t, uint32_t, uint8_t, uint8_t);
+  uint8_t requestFrom(int, int);
+  uint8_t requestFrom(int, int, int);
+  virtual size_t write(uint8_t);
+  virtual size_t write(const uint8_t *, size_t);
+  virtual int available(void);
+  virtual int read(void);
+  virtual int peek(void);
+  virtual void flush(void);
+  void onReceive(void (*)(int));
+  void onRequest(void (*)(void));
 
-    void resetRxBuffer(void);
-    void resetTxBuffer(void);
-
-  public:
-    TwoWire();
-    TwoWire(uint8_t sda, uint8_t scl);
-    // setSCL/SDA have to be called before begin()
-    void setSCL(uint32_t scl) { _i2c.scl = digitalPinToPinName(scl); };
-    void setSDA(uint32_t sda) { _i2c.sda = digitalPinToPinName(sda); };
-    void setSCL(PinName scl) { _i2c.scl = scl; };
-    void setSDA(PinName sda) { _i2c.sda = sda; };
-    void begin();
-    void begin(uint8_t);
-    void begin(int);
-    void end();
-    void setClock(uint32_t);
-    void beginTransmission(uint8_t);
-    void beginTransmission(int);
-    uint8_t endTransmission(void);
-    uint8_t endTransmission(uint8_t);
-    uint8_t requestFrom(uint8_t, uint8_t);
-    uint8_t requestFrom(uint8_t, uint8_t, uint8_t);
-    uint8_t requestFrom(uint8_t, uint8_t, uint32_t, uint8_t, uint8_t);
-    uint8_t requestFrom(int, int);
-    uint8_t requestFrom(int, int, int);
-    virtual size_t write(uint8_t);
-    virtual size_t write(const uint8_t *, size_t);
-    virtual int available(void);
-    virtual int read(void);
-    virtual int peek(void);
-    virtual void flush(void);
-    void onReceive( void (*)(int) );
-    void onRequest( void (*)(void) );
-
-    inline size_t write(unsigned long n) { return write((uint8_t)n); }
-    inline size_t write(long n) { return write((uint8_t)n); }
-    inline size_t write(unsigned int n) { return write((uint8_t)n); }
-    inline size_t write(int n) { return write((uint8_t)n); }
-    using Print::write;
+  inline size_t write(unsigned long n) { return write((uint8_t)n); }
+  inline size_t write(long n) { return write((uint8_t)n); }
+  inline size_t write(unsigned int n) { return write((uint8_t)n); }
+  inline size_t write(int n) { return write((uint8_t)n); }
+  using Print::write;
 };
-
-
 
 extern TwoWire Wire;
 

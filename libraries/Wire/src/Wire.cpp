@@ -19,27 +19,15 @@
   Modified 2012 by Todd Krein (todd@krein.org) to implement repeated starts
 */
 
-extern "C" {
-  #include <stdlib.h>
-  #include <string.h>
-  #include <inttypes.h>
+extern "C"
+{
+#include <stdlib.h>
+#include <string.h>
+#include <inttypes.h>
 }
 
 #include "Wire.h"
 
-// Initialize Class Variables //////////////////////////////////////////////////
-uint8_t *TwoWire::rxBuffer = nullptr;
-uint8_t TwoWire::rxBufferAllocated = 0;
-uint8_t TwoWire::rxBufferIndex = 0;
-uint8_t TwoWire::rxBufferLength = 0;
-
-uint8_t TwoWire::txAddress = 0;
-uint8_t *TwoWire::txBuffer = nullptr;
-uint8_t TwoWire::txBufferAllocated = 0;
-uint8_t TwoWire::txBufferIndex = 0;
-uint8_t TwoWire::txBufferLength = 0;
-
-uint8_t TwoWire::transmitting = 0;
 void (*TwoWire::user_onRequest)(void);
 void (*TwoWire::user_onReceive)(int);
 
@@ -53,10 +41,9 @@ TwoWire::TwoWire()
 
 TwoWire::TwoWire(uint8_t sda, uint8_t scl)
 {
-  _i2c.sda = digitalPinToPinName(sda);
-  _i2c.scl = digitalPinToPinName(scl);
+  _i2c.sda =  digitalPinToPinName(sda);
+  _i2c.scl =  digitalPinToPinName(scl);
 }
-
 // Public Methods //////////////////////////////////////////////////////////////
 
 void TwoWire::begin(void)
@@ -68,27 +55,25 @@ void TwoWire::begin(uint8_t address)
 {
   rxBufferIndex = 0;
   rxBufferLength = 0;
-  resetRxBuffer();
-
   txBufferIndex = 0;
   txBufferLength = 0;
-  resetTxBuffer();
 
   transmitting = 0;
 
   ownAddress = address << 1;
 
-  if(address == MASTER_ADDRESS)
-    master = true;
+  if (address == MASTER_ADDRESS)
+  {
+    master = 1;
+  }
   else
-    master = false;
+  {
+    master = 0;
+  }
+  i2c_custom_init(&_i2c, I2C_DEFAULT_SPEED, I2C_ADDMODE_7BIT, ownAddress, master);
 
-  i2c_custom_init(&_i2c,I2C_100KHz,I2C_ADDRESSINGMODE_7BIT,ownAddress,master);
-
-  if(master == false){
-    // i2c_attachSlaveTxEvent(&_i2c, reinterpret_cast<void(*)(i2c_t*)>(&TwoWire::onRequestService));
-    // i2c_attachSlaveRxEvent(&_i2c, reinterpret_cast<void(*)(i2c_t*, uint8_t*, int)>(&TwoWire::onReceiveService));
-
+  if (master == 0)
+  {
     i2c_attachSlaveTxEvent(&_i2c, onRequestService);
     i2c_attachSlaveRxEvent(&_i2c, onReceiveService);
   }
@@ -101,12 +86,6 @@ void TwoWire::begin(int address)
 
 void TwoWire::end(void)
 {
-  free(txBuffer);
-  txBuffer = nullptr;
-  txBufferAllocated = 0;
-  free(rxBuffer);
-  rxBuffer = nullptr;
-  rxBufferAllocated = 0;
   i2c_deinit(&_i2c);
 }
 
@@ -117,16 +96,10 @@ void TwoWire::setClock(uint32_t frequency)
 
 uint8_t TwoWire::requestFrom(uint8_t address, uint8_t quantity, uint32_t iaddress, uint8_t isize, uint8_t sendStop)
 {
-  UNUSED(sendStop);
-  if (master == true) {
-    allocateRxBuffer(quantity);
-    // error if no memory block available to allocate the buffer
-    if(rxBuffer == nullptr){
-      setWriteError();
-      return 0;
-    }
-
-    if (isize > 0) {
+  if (master == true)
+  {
+    if (isize > 0)
+    {
       // send internal address; this mode allows sending a repeated start to access
       // some devices' internal registers. This function is executed by the hardware
       // TWI module on other processors (for example Due's TWI_IADR and TWI_MMR registers)
@@ -134,20 +107,26 @@ uint8_t TwoWire::requestFrom(uint8_t address, uint8_t quantity, uint32_t iaddres
       beginTransmission(address);
 
       // the maximum size of internal address is 3 bytes
-      if (isize > 3){
+      if (isize > 3)
+      {
         isize = 3;
       }
 
       // write internal register address - most significant byte first
-      while (isize-- > 0) {
-        write((uint8_t)(iaddress >> (isize*8)));
-      }
+      while (isize-- > 0)
+        write((uint8_t)(iaddress >> (isize * 8)));
+
       endTransmission(false);
     }
 
+    // clamp to buffer length
+    if (quantity > BUFFER_LENGTH)
+    {
+      quantity = BUFFER_LENGTH;
+    }
     // perform blocking read into buffer
     uint8_t read = 0;
-    if(I2C_OK == i2c_master_read(&_i2c, address << 1, rxBuffer, quantity))
+    if (I2C_OK == i2c_master_read(&_i2c, address << 1, rxBuffer, quantity))
       read = quantity;
 
     // set rx buffer iterator vars
@@ -160,18 +139,19 @@ uint8_t TwoWire::requestFrom(uint8_t address, uint8_t quantity, uint32_t iaddres
   return 0;
 }
 
-uint8_t TwoWire::requestFrom(uint8_t address, uint8_t quantity, uint8_t sendStop) {
-	return requestFrom((uint8_t)address, (uint8_t)quantity, (uint32_t)0, (uint8_t)0, (uint8_t)sendStop);
+uint8_t TwoWire::requestFrom(uint8_t address, uint8_t quantity, uint8_t sendStop)
+{
+  return requestFrom((uint8_t)address, (uint8_t)quantity, (uint32_t)0, (uint8_t)0, (uint8_t)sendStop);
 }
 
 uint8_t TwoWire::requestFrom(uint8_t address, uint8_t quantity)
 {
-  return requestFrom((uint8_t)address, (uint8_t)quantity, (uint8_t)true);
+  return requestFrom((uint8_t)address, (uint8_t)quantity, (uint8_t) true);
 }
 
 uint8_t TwoWire::requestFrom(int address, int quantity)
 {
-  return requestFrom((uint8_t)address, (uint8_t)quantity, (uint8_t)true);
+  return requestFrom((uint8_t)address, (uint8_t)quantity, (uint8_t) true);
 }
 
 uint8_t TwoWire::requestFrom(int address, int quantity, int sendStop)
@@ -210,31 +190,27 @@ void TwoWire::beginTransmission(int address)
 //
 uint8_t TwoWire::endTransmission(uint8_t sendStop)
 {
-  UNUSED(sendStop);
   int8_t ret = 4;
 
-  if (master == true) {
+  if (master == true)
+  {
     // transmit buffer (blocking)
-    switch(i2c_master_write(&_i2c, txAddress, txBuffer, txBufferLength))
+    switch (i2c_master_write(&_i2c, txAddress, txBuffer, txBufferLength))
     {
-    case I2C_OK :
+    case I2C_OK:
       ret = 0;
-    break;
-    case I2C_TIMEOUT :
+      break;
+    case I2C_TIMEOUT:
       ret = 1;
-    break;
+      break;
     default:
       ret = 4;
-    break;
+      break;
     }
-
-    // reset Tx buffer
-    resetTxBuffer();
 
     // reset tx buffer iterator vars
     txBufferIndex = 0;
     txBufferLength = 0;
-
     // indicate that we are done transmitting
     transmitting = 0;
   }
@@ -255,11 +231,12 @@ uint8_t TwoWire::endTransmission(void)
 // or after beginTransmission(address)
 size_t TwoWire::write(uint8_t data)
 {
-  if(transmitting){
-  // in master transmitter mode
-    allocateTxBuffer(txBufferLength + 1);
-    // error if no memory block available to allocate the buffer
-    if(txBuffer == nullptr){
+  if (transmitting)
+  {
+    // in master transmitter mode
+    // don't bother if buffer is full
+    if (txBufferLength >= BUFFER_LENGTH)
+    {
       setWriteError();
       return 0;
     }
@@ -268,47 +245,36 @@ size_t TwoWire::write(uint8_t data)
     ++txBufferIndex;
     // update amount in buffer
     txBufferLength = txBufferIndex;
-  }else{
-  // in slave send mode
+  }
+  else
+  {
+    // in slave send mode
     // reply to master
-    if(i2c_slave_write_IT(&_i2c,&data,1) != I2C_OK) {
-      return 0;
-    }
+    i2c_slave_write_IT(&_i2c, &data, 1);
   }
   return 1;
 }
 
-/**
-  * @brief  This function must be called in slave Tx event callback or after
-  *         beginTransmission() and before endTransmission().
-  * @param  pdata: pointer to the buffer data
-  * @param  quantity: number of bytes to write
-  * @retval number of bytes ready to write.
-  */
+// must be called in:
+// slave tx event callback
+// or after beginTransmission(address)
 size_t TwoWire::write(const uint8_t *data, size_t quantity)
 {
-  if(transmitting){
-  // in master transmitter mode
-    allocateTxBuffer(txBufferLength + quantity);
-    // error if no memory block available to allocate the buffer
-    if(txBuffer == nullptr){
-      setWriteError();
-      return 0;
-    }
-    // put bytes in tx buffer
-	memcpy(&(txBuffer[txBufferIndex]), data, quantity);
-    txBufferIndex= txBufferIndex + quantity;
-    // update amount in buffer
-    txBufferLength = txBufferIndex;
-    return quantity;
-  }else{
-  // in slave send mode
-    // reply to master
-    if(i2c_slave_write_IT(&_i2c, (uint8_t *)data, quantity) == I2C_OK) {
-      return quantity;
+  if (transmitting)
+  {
+    // in master transmitter mode
+    for (size_t i = 0; i < quantity; ++i)
+    {
+      write(data[i]);
     }
   }
-  return 0;
+  else
+  {
+    // in slave send mode
+    // reply to master
+    i2c_slave_write_IT(&_i2c, (uint8_t *)data, quantity);
+  }
+  return quantity;
 }
 
 // must be called in:
@@ -327,7 +293,8 @@ int TwoWire::read(void)
   int value = -1;
 
   // get each successive byte on each call
-  if(rxBufferIndex < rxBufferLength){
+  if (rxBufferIndex < rxBufferLength)
+  {
     value = rxBuffer[rxBufferIndex];
     ++rxBufferIndex;
 
@@ -349,7 +316,8 @@ int TwoWire::peek(void)
 {
   int value = -1;
 
-  if(rxBufferIndex < rxBufferLength){
+  if (rxBufferIndex < rxBufferLength)
+  {
     value = rxBuffer[rxBufferIndex];
   }
 
@@ -360,109 +328,73 @@ void TwoWire::flush(void)
 {
   rxBufferIndex = 0;
   rxBufferLength = 0;
-  resetRxBuffer();
   txBufferIndex = 0;
   txBufferLength = 0;
-  resetTxBuffer();
 }
 
 // behind the scenes function that is called when data is received
-void TwoWire::onReceiveService(uint8_t* inBytes, int numBytes)
+void TwoWire::onReceiveService(uint8_t *inBytes, int numBytes)
 {
+  TwoWire *ptr;
+  ptr = &Wire;
+
   // don't bother if user hasn't registered a callback
-  if(!user_onReceive){
+  if (!ptr->user_onReceive)
+  {
     return;
   }
 
   // don't bother if rx buffer is in use by a master requestFrom() op
   // i know this drops data, but it allows for slight stupidity
   // meaning, they may not have read all the master requestFrom() data yet
-  if(rxBufferIndex < rxBufferLength){
+  if (ptr->rxBufferIndex < ptr->rxBufferLength)
+  {
     return;
   }
-
-  allocateRxBuffer(numBytes);
-  // error if no memory block available to allocate the buffer
-  if(rxBuffer == nullptr){
-    Error_Handler();
-  }
-
   // copy twi rx buffer into local read buffer
   // this enables new reads to happen in parallel
-  memcpy(rxBuffer, inBytes, numBytes);
+  for (uint8_t i = 0; i < numBytes; ++i)
+  {
+    ptr->rxBuffer[i] = inBytes[i];
+  }
   // set rx iterator vars
-  rxBufferIndex = 0;
-  rxBufferLength = numBytes;
+  ptr->rxBufferIndex = 0;
+  ptr->rxBufferLength = numBytes;
   // alert user program
-  user_onReceive(numBytes);
+  ptr->user_onReceive(numBytes);
 }
 
-// behind the scenes function that is called when data is requested
 void TwoWire::onRequestService(void)
 {
+  TwoWire *ptr;
+  ptr = &Wire;
+
   // don't bother if user hasn't registered a callback
-  if(!user_onRequest){
+  if (!ptr->user_onRequest)
+  {
     return;
   }
 
   // reset tx buffer iterator vars
   // !!! this will kill any pending pre-master sendTo() activity
-  txBufferIndex = 0;
-  txBufferLength = 0;
+  ptr->txBufferIndex = 0;
+  ptr->txBufferLength = 0;
   // alert user program
-  user_onRequest();
+  ptr->user_onRequest();
 }
 
 // sets function called on slave write
-void TwoWire::onReceive( void (*function)(int) )
+void TwoWire::onReceive(void (*function)(int))
 {
   user_onReceive = function;
 }
 
 // sets function called on slave read
-void TwoWire::onRequest( void (*function)(void) )
+void TwoWire::onRequest(void (*function)(void))
 {
   user_onRequest = function;
 }
 
-/**
-  * @brief  Allocate the Rx/Tx buffer to the requested length if needed
-  * @note   Minimum allocated size is BUFFER_LENGTH)
-  * @param  length: number of bytes to allocate
-  */
-void TwoWire::allocateRxBuffer(size_t length)
-{
-  if(rxBufferAllocated < length) {
-  // By default we allocate BUFFER_LENGTH bytes. It is the min size of the buffer.
-    if(length < BUFFER_LENGTH) { length = BUFFER_LENGTH; }
-    rxBuffer = (uint8_t *)realloc(rxBuffer, length * sizeof(uint8_t));
-	rxBufferAllocated = (rxBuffer != nullptr) ? length: 0;
-  }
-}
-
-inline void TwoWire::allocateTxBuffer(size_t length)
-{
-  if(txBufferAllocated < length) {
-    // By default we allocate BUFFER_LENGTH bytes. It is the min size of the buffer.
-    if(length < BUFFER_LENGTH) { length = BUFFER_LENGTH; }
-    txBuffer = (uint8_t *)realloc(txBuffer, length * sizeof(uint8_t));
-    txBufferAllocated = (txBuffer != nullptr) ? length: 0;
-  }
-}
-
-/**
-  * @brief  Reset Rx/Tx buffer content to 0
-  */
-inline void TwoWire::resetRxBuffer(void)
-{
-  if (rxBuffer != nullptr) memset(rxBuffer, 0, rxBufferAllocated);
-}
-
-inline void TwoWire::resetTxBuffer(void)
-{
-  if (txBuffer != nullptr) memset(txBuffer, 0, txBufferAllocated);
-}
-
 // Preinstantiate Objects //////////////////////////////////////////////////////
 
-TwoWire Wire = TwoWire(); //D14-D15
+TwoWire Wire = TwoWire();
