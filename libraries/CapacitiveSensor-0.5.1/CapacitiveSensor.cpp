@@ -23,7 +23,7 @@ CapacitiveSensor::CapacitiveSensor(uint8_t sendPin, uint8_t receivePin)
 	error = 1;
 	loopTimingFactor = 310;		// determined empirically -  a hack
 
-	CS_Timeout_Millis = (2000 * (float)loopTimingFactor * (float)F_CPU) / 16000000;
+	CS_Timeout_Millis = (unsigned long)((2000 * (float)loopTimingFactor * (float)F_CPU) / 16000000);
 	CS_AutocaL_Millis = 20000;
 
 	// get pin mapping and port for send Pin - from PinMode function in core
@@ -31,7 +31,7 @@ CapacitiveSensor::CapacitiveSensor(uint8_t sendPin, uint8_t receivePin)
 	  error = -1;
 	  return;
 	}
-	
+
 	rPin = receivePin;
 	sPin = sendPin;
 
@@ -61,7 +61,12 @@ long CapacitiveSensor::capacitiveSensor(uint8_t samples)
 		// only calibrate if time is greater than CS_AutocaL_Millis and total is less than 10% of baseline
 		// this is an attempt to keep from calibrating when the sensor is seeing a "touched" signal
 
+#ifdef __CSMC__
+		if ( (millis() - lastCal > CS_AutocaL_Millis))
+		 if (abs(total  - leastTotal) < (int)(.10 * (float)leastTotal) ) {
+#else
 		if ( (millis() - lastCal > CS_AutocaL_Millis) && abs(total  - leastTotal) < (int)(.10 * (float)leastTotal) ) {
+#endif
 
 			// Serial.println();               // debugging
 			// Serial.println("auto-calibrate");
@@ -115,7 +120,7 @@ void CapacitiveSensor::set_CS_AutocaL_Millis(unsigned long autoCal_millis){
 }
 
 void CapacitiveSensor::set_CS_Timeout_Millis(unsigned long timeout_millis){
-	CS_Timeout_Millis = (timeout_millis * (float)loopTimingFactor * (float)F_CPU) / 16000000;  // floats to deal with large numbers
+	CS_Timeout_Millis = (unsigned long)((timeout_millis * (float)loopTimingFactor * (float)F_CPU) / 16000000);  // floats to deal with large numbers
 }
 
 // Private Methods /////////////////////////////////////////////////////////////
