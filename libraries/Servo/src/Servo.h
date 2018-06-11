@@ -65,29 +65,23 @@
 #include "sam/ServoTimers.h"
 #elif defined(ARDUINO_ARCH_SAMD)
 #include "samd/ServoTimers.h"
-#elif defined(ARDUINO_ARCH_STM32F4)
-#include "stm32f4/ServoTimers.h"
-#elif defined(ARDUINO_ARCH_NRF52)
-#include "nrf52/ServoTimers.h"
-#elif defined(ARDUINO_ARCH_STM32)
-#include "stm32/ServoTimers.h"
+#elif defined(ARDUINO_ARCH_STM8)
+#include "stm8/ServoTimers.h"
 #else
-#error "This library only supports boards with an AVR, SAM, SAMD, NRF52, STM32F4 or STM32 processor."
+#error "This library only supports boards with an AVR, SAM, SAMD, NRF52 or STM8 processor."
 #endif
 
 #define Servo_VERSION           2     // software version of this library
 
-#define MIN_PULSE_WIDTH       544     // the shortest pulse sent to a servo
-#define MAX_PULSE_WIDTH      2400     // the longest pulse sent to a servo
+#define MIN_PULSE_WIDTH       500     // the shortest pulse sent to a servo
+#define MAX_PULSE_WIDTH      2000     // the longest pulse sent to a servo
 #define DEFAULT_PULSE_WIDTH  1500     // default pulse width when servo is attached
-#define REFRESH_INTERVAL    20000     // minumim time to refresh servos in microseconds
+#define REFRESH_INTERVAL    285000     // minumim time to refresh servos in microseconds
 
 #define SERVOS_PER_TIMER       12     // the maximum number of servos controlled by one timer
 #define MAX_SERVOS   (_Nbr_16timers  * SERVOS_PER_TIMER)
 
 #define INVALID_SERVO         255     // flag indicating an invalid servo index
-
-#if !defined(ARDUINO_ARCH_STM32F4)
 
 typedef struct  {
   uint8_t nbr        :6 ;             // a pin number from 0 to 63
@@ -117,5 +111,4 @@ private:
    int8_t max;                       // maximum is this value times 4 added to MAX_PULSE_WIDTH
 };
 
-#endif
 #endif

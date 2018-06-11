@@ -28,9 +28,10 @@
 #define __SERVO_TIMERS_H__
 
 // Uses one timer. Allows until 12 servos.
-typedef enum {
+typedef enum
+{
   _timer1,
   _Nbr_16timers
 } timer16_Sequence_t;
 
-#endif   // __SERVO_TIMERS_H__
+#endif // __SERVO_TIMERS_H__
