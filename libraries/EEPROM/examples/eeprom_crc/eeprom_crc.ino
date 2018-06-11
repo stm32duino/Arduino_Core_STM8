@@ -10,6 +10,8 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 
+unsigned long eeprom_crc(void);
+
 void setup() {
 
   //Start serial

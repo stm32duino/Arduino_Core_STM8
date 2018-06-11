@@ -17,6 +17,8 @@
 
 #include <EEPROM.h>
 
+void secondTest();
+
 void setup() {
 
   float f = 0.00f;   //Variable to store data read from EEPROM.
