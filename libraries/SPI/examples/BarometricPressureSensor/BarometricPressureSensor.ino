@@ -29,13 +29,16 @@
 const int PRESSURE = 0x1F;      //3 most significant bits of pressure
 const int PRESSURE_LSB = 0x20;  //16 least significant bits of pressure
 const int TEMPERATURE = 0x21;   //16 bit temperature reading
-const byte READ = 0b11111100;     // SCP1000's read command
-const byte WRITE = 0b00000010;   // SCP1000's write command
+const byte READ = B11111100;     // SCP1000's read command
+const byte WRITE = B00000010;   // SCP1000's write command
 
 // pins used for the connection with the sensor
 // the other you need are controlled by the SPI library):
 const int dataReadyPin = 6;
 const int chipSelectPin = 7;
+
+unsigned int readRegister(byte thisRegister, int bytesToRead);
+void writeRegister(byte thisRegister, byte thisValue);
 
 void setup() {
   Serial.begin(9600);
@@ -72,7 +75,7 @@ void loop() {
 
     //Read the pressure data highest 3 bits:
     byte  pressure_data_high = readRegister(0x1F, 1);
-    pressure_data_high &= 0b00000111; //you only needs bits 2 to 0
+    pressure_data_high &= B00000111; //you only needs bits 2 to 0
 
     //Read the pressure data lower 16 bits:
     unsigned int pressure_data_low = readRegister(0x20, 2);
@@ -140,4 +143,3 @@ void writeRegister(byte thisRegister, byte thisValue) {
   // take the chip select high to de-select:
   digitalWrite(chipSelectPin, HIGH);
 }
-
