@@ -131,13 +131,13 @@
  #define FAR  @far
  #define NEAR @near
  #define TINY @tiny
- #define EEPROM @eeprom
+ #define EEPROMAccess @eeprom
  #define CONST  const
 #elif defined (_RAISONANCE_) /* __RCSTM8__ */
  #define FAR  far
  #define NEAR data
  #define TINY page0
- #define EEPROM eeprom
+ #define EEPROMAccess eeprom
  #define CONST  code
  #if defined (STM8L15X_MD) || defined (STM8L15X_MDP) || defined (STM8L05X_MD_VL) || \
  defined (STM8AL31_L_MD)
@@ -151,7 +151,7 @@
  #define FAR  __far
  #define NEAR __near
  #define TINY __tiny
- #define EEPROM __eeprom
+ #define EEPROMAccess __eeprom
  #define CONST  const
 #endif /* __CSMC__ */
 
