@@ -207,10 +207,13 @@
 #define     __O     volatile         /*!< defines 'write only' permissions    */
 #define     __IO    volatile         /*!< defines 'read / write' permissions  */
 
-/*!< Signed integer types  */
-typedef   signed char     int8_t;
-typedef   signed short    int16_t;
-typedef   signed long     int32_t;
+#if defined(__ICCSTM8__) || defined(__CSMC__)
+  #include <stdint.h>
+#else
+  /*!< Signed integer types  */
+  typedef   signed char     int8_t;
+  typedef   signed short    int16_t;
+  typedef   signed long     int32_t;
 
 /*!< Unsigned integer types  */
 typedef unsigned char     uint8_t;
@@ -228,7 +231,10 @@ typedef uint16_t u16;
 typedef uint8_t  u8;
 
 
-typedef enum {FALSE = 0, TRUE = !FALSE} bool;
+  #ifndef __cplusplus
+    typedef enum {FALSE = 0, TRUE = !FALSE} bool;
+  #endif
+#endif 
 
 typedef enum {RESET = 0, SET = !RESET} FlagStatus, ITStatus, BitStatus, BitAction;
 
@@ -2745,8 +2751,13 @@ CFG_TypeDef;
 /*============================== Interrupt vector Handling ========================*/
 
 #ifdef _COSMIC_
- #define INTERRUPT_HANDLER(a,b) @far @interrupt void a(void)
- #define INTERRUPT_HANDLER_TRAP(a) void @far @interrupt a(void)
+  #ifdef __cplusplus
+    #define INTERRUPT_HANDLER(a,b) void a(void)
+    #define INTERRUPT_HANDLER_TRAP(a) void a(void)
+  #else
+    #define INTERRUPT_HANDLER(a,b) @interrupt @svlreg void a(void)
+    #define INTERRUPT_HANDLER_TRAP(a) @interrupt void a(void)
+  #endif
 #endif /* _COSMIC_ */
 
 #ifdef _RAISONANCE_
@@ -2767,7 +2778,11 @@ CFG_TypeDef;
 
 /*============================== Interrupt Handler declaration ========================*/
 #ifdef _COSMIC_
- #define INTERRUPT @far @interrupt
+  #ifdef __cplusplus
+    #define INTERRUPT
+  #else
+    #define INTERRUPT @interrupt
+  #endif
 #elif defined(_IAR_)
  #define INTERRUPT __interrupt
 #endif /* _COSMIC_ */
