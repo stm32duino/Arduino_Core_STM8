@@ -217,7 +217,9 @@ defined (STM8L05X_LD_VL) || defined (STM8L05X_MD_VL) || defined (STM8AL31_L_MD)
 #define     __I     volatile const   /*!< defines 'read only' permissions     */
 #define     __O     volatile         /*!< defines 'write only' permissions    */
 #define     __IO    volatile         /*!< defines 'read / write' permissions  */
-
+#if defined(__ICCSTM8__) || defined(__CSMC__)
+	#include <stdint.h>
+#else
 /*!< Signed integer types  */
 typedef   signed char     int8_t;
 typedef   signed short    int16_t;
@@ -238,9 +240,10 @@ typedef uint32_t  u32;
 typedef uint16_t u16;
 typedef uint8_t  u8;
 
-
-typedef enum {FALSE = 0, TRUE = !FALSE} bool;
-
+  #ifdef __cplusplus
+    typedef enum {FALSE = 0, TRUE = !FALSE} bool;
+  #endif
+#endif
 typedef enum {RESET = 0, SET = !RESET} FlagStatus, ITStatus, BitStatus, BitAction;
 
 typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
@@ -2936,8 +2939,13 @@ AES_TypeDef;
 /*============================== Interrupt vector Handling ========================*/
 
 #ifdef _COSMIC_
- #define INTERRUPT_HANDLER(a,b) @far @interrupt void a(void)
- #define INTERRUPT_HANDLER_TRAP(a) void @far @interrupt a(void)
+ #ifdef __cplusplus
+  #define INTERRUPT_HANDLER(a,b) void a(void)
+  #define INTERRUPT_HANDLER_TRAP(a) void a(void)
+ #else
+  #define INTERRUPT_HANDLER(a,b) @interrupt @svlreg void a(void)
+  #define INTERRUPT_HANDLER_TRAP(a) @interrupt void a(void)
+ #endif
 #endif /* _COSMIC_ */
 
 #ifdef _RAISONANCE_
@@ -2958,7 +2966,11 @@ AES_TypeDef;
 
 /*============================== Interrupt Handler declaration ========================*/
 #ifdef _COSMIC_
- #define INTERRUPT @far @interrupt
+ #ifdef __cplusplus
+  #define INTERRUPT
+ #else
+  #define INTERRUPT @interrupt
+ #endif
 #elif defined(_IAR_)
  #define INTERRUPT __interrupt
 #endif /* _COSMIC_ */
@@ -2993,6 +3005,7 @@ Comments :    The different parameters of commands are
 #define BYTE_2(n)                 ((uint8_t)(BYTE_0((n) >> (uint8_t)16))) /*!< Returns the third byte of the 32-bit value */
 #define BYTE_3(n)                 ((uint8_t)(BYTE_0((n) >> (uint8_t)24))) /*!< Returns the high byte of the 32-bit value */
 
+#define UNUSED(x)                 ((void)(x))
 /*============================== Assert Macros ====================================*/
 #define IS_STATE_VALUE(STATE) \
   (((STATE) == SET) || \

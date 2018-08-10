@@ -58,7 +58,7 @@ uint8_t ITC_GetCPUCC(void)
 #ifdef _COSMIC_
   _asm("push cc");
   _asm("pop a");
-  return; /* Ignore compiler warning, the returned value is in A register */
+  //return; /* Ignore compiler warning, the returned value is in A register */
 #elif defined _RAISONANCE_ /* _RAISONANCE_ */
   return _getCC_();
 #else /* _IAR_ */
