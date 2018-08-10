@@ -122,13 +122,13 @@
  #define FAR  @far
  #define NEAR @near
  #define TINY @tiny
- #define EEPROM @eeprom
+ #define EEPROMAccess @eeprom
  #define CONST  const
 #elif defined (_RAISONANCE_) /* __RCST7__ */
  #define FAR  far
  #define NEAR data
  #define TINY page0
- #define EEPROM eeprom
+ #define EEPROMAccess eeprom
  #define CONST  code
  #if defined (STM8S208) || defined (STM8S207) || defined (STM8S007) || defined (STM8AF52Ax) || \
      defined (STM8AF62Ax)
@@ -142,7 +142,7 @@
  #define FAR  __far
  #define NEAR __near
  #define TINY __tiny
- #define EEPROM __eeprom
+ #define EEPROMAccess __eeprom
  #define CONST  const
 #endif /* __CSMC__ */
 
@@ -2652,7 +2652,7 @@ CFG_TypeDef;
 #define WWDG ((WWDG_TypeDef *) WWDG_BaseAddress)
 #define IWDG ((IWDG_TypeDef *) IWDG_BaseAddress)
 
-#define SPI ((SPI_TypeDef *) SPI_BaseAddress)
+#define SPI1 ((SPI_TypeDef *) SPI_BaseAddress)
 #define I2C ((I2C_TypeDef *) I2C_BaseAddress)
 
 #if defined(STM8S208) || defined(STM8S207) || defined (STM8S007) || defined(STM8S103) || \
