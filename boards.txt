@@ -1,0 +1,82 @@
+# See: https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5-3rd-party-Hardware-specification
+
+menu.xserial=Serial interface
+menu.upload_method=Upload Method
+
+
+################################################################################
+# Nucleo 8S Board
+
+Nucleo_8S208RB.name=Nucleo_8S208RB
+
+Nucleo_8S208RB.build.core=arduino
+Nucleo_8S208RB.build.board=Nucleo_8S208RB
+Nucleo_8S208RB.build.extra_flags=-d{build.product_line} {build.xSerial}
+
+# Nucleo_8S208RB board
+# Support: Serial1 (USART1 on PA4, PA5) and Serial2 (USART2 on PD6, PD5)
+Nucleo_8S208RB=Nucleo 8S208RB
+Nucleo_8S208RB.device=STM8S208RB
+Nucleo_8S208RB.node=NODE_8S208
+Nucleo_8S208RB.upload.maximum_size=131072
+Nucleo_8S208RB.upload.maximum_data_size=6144
+Nucleo_8S208RB.build.mcu=8-bit
+Nucleo_8S208RB.build.board=Nucleo_8S208RB
+Nucleo_8S208RB.build.series=STM8Sxx
+Nucleo_8S208RB.build.splibraryPrefix=_StdPeriph_Driver
+Nucleo_8S208RB.build.product_line=STM8S208
+Nucleo_8S208RB.build.variant=NUCLEO_8S208RB
+Nucleo_8S208RB.build.f_cpu=16000000
+
+Nucleo_8S208RB.menu.upload_method.MassStorage=Mass Storage
+Nucleo_8S208RB.menu.upload_method.MassStorage.upload.protocol=
+Nucleo_8S208RB.menu.upload_method.MassStorage.upload.tool=massStorageCopy
+
+Nucleo_8S208RB.menu.upload_method.stm8Flasher=stm8Flasher
+Nucleo_8S208RB.menu.upload_method.stm8Flasher.upload.protocol=stm8Tools
+Nucleo_8S208RB.menu.upload_method.stm8Flasher.upload.tool=stm8Flasher
+################################################################################
+# Nucleo 8L Board
+
+Nucleo_8L152R8.name=Nucleo_8L152R8
+
+Nucleo_8L152R8.build.core=arduino
+Nucleo_8L152R8.build.board=Nucleo_8L152R8
+Nucleo_8L152R8.build.extra_flags=-d{build.product_line} {build.xSerial}
+
+# NUCLEO_8L152R8 board
+# Support: Serial1 (USART1 on PA2, PA3), Serial2 (USART2 on PE3, PE4) and Serial3 (USART2 on PG0, PG1)
+Nucleo_8L152R8=Nucleo 8L152R8
+Nucleo_8L152R8.device=STM8L15xR8
+Nucleo_8L152R8.node=NODE_8L152
+Nucleo_8L152R8.upload.maximum_size=65536
+Nucleo_8L152R8.upload.maximum_data_size=4096
+Nucleo_8L152R8.build.mcu=8-bit
+Nucleo_8L152R8.build.board=Nucleo_8L152R8
+Nucleo_8L152R8.build.series=STM8Lxx
+Nucleo_8L152R8.build.splibraryPrefix=_StdPeriph_Driver
+Nucleo_8L152R8.build.product_line=STM8L15X_HD
+Nucleo_8L152R8.build.variant=NUCLEO_8L152R8
+Nucleo_8L152R8.build.f_cpu=16000000
+
+Nucleo_8L152R8.menu.upload_method.MassStorage=Mass Storage
+Nucleo_8L152R8.menu.upload_method.MassStorage.upload.protocol=
+Nucleo_8L152R8.menu.upload_method.MassStorage.upload.tool=massStorageCopy
+
+Nucleo_8L152R8.menu.upload_method.stm8Flasher=stm8Flasher
+Nucleo_8L152R8.menu.upload_method.stm8Flasher.upload.protocol=stm8Tools
+Nucleo_8L152R8.menu.upload_method.stm8Flasher.upload.tool=stm8Flasher
+
+################################################################################
+# Serialx activation
+Nucleo_8S208RB.menu.xserial.generic=Enabled with generic Serial
+Nucleo_8S208RB.menu.xserial.none=Enabled without generic Serial
+Nucleo_8S208RB.menu.xserial.none.build.xSerial=-dHWSERIAL_NONE
+Nucleo_8S208RB.menu.xserial.disabled=Disabled (No Serial)
+Nucleo_8S208RB.menu.xserial.disabled.build.xSerial=-dNO_HWSERIAL
+
+Nucleo_8L152R8.menu.xserial.generic=Enabled with generic Serial
+Nucleo_8L152R8.menu.xserial.none=Enabled without generic Serial
+Nucleo_8L152R8.menu.xserial.none.build.xSerial=-dHWSERIAL_NONE
+Nucleo_8L152R8.menu.xserial.disabled=Disabled (No Serial)
+Nucleo_8L152R8.menu.xserial.disabled.build.xSerial=-dNO_HWSERIAL

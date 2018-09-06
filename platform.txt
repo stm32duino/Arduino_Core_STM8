@@ -1,0 +1,127 @@
+
+# STM8 Core and platform.
+# ------------------------------
+#
+# For more info:
+# https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5-3rd-party-Hardware-specification
+
+name = STM8 Boards
+version=1.0.0
+
+# STM compile variables
+# ----------------------
+compiler.stm.extra_include=-I "{build.source.path}" -I "{build.system.path}\Drivers\{build.series_path}" -I "{build.system.path}\Drivers\{build.series_path}\inc\" -I "{build.system.path}\Drivers\{build.series_path}\src\" -I "{build.core.path}\stm8\"
+
+compiler.warning_flags=
+compiler.warning_flags.none=-pw
+compiler.warning_flags.default=-pw
+compiler.warning_flags.more=
+compiler.warning_flags.all=
+
+compiler.path={runtime.tools.cxppstm8.path}\
+
+compiler.c.cmd=cxppstm8.exe
+compiler.c.sm8.cmd=clnk.exe
+compiler.S.cmd=castm8.exe
+compiler.cpp.cmd=cxppstm8.exe
+compiler.ar.cmd=clib.exe
+compiler.sm82hex.cmd=chex.exe
+compiler.hex2bin.cmd=hex2bin.exe
+compiler.size.cmd=cmd.exe
+
+compiler.libcpp={compiler.path}\lib
+
+compiler.extra_flags=-gh -si -sd +proto +split
+
+compiler.c.flags= {compiler.extra_flags} -I "{compiler.path}\hstm8" -I "{compiler.path}\hstm8++" {compiler.stm.extra_include}
+compiler.c.sm8.flags=
+compiler.S.flags=
+compiler.cpp.flags= {compiler.extra_flags} -I "{compiler.path}\hstm8++" -c"i{compiler.path}\hstm8" {compiler.stm.extra_include} {compiler.warning_flags}
+compiler.ar.flags=-e -r -p
+compiler.sm82hex.flags=-fi
+compiler.hex2bin.flags=-b
+compiler.ldflags=
+compiler.define=-dARDUINO=
+
+system.path=C:\windows\system32\
+
+# This can be overriden in boards.txt
+build.extra_flags=
+
+# These can be overridden in platform.local.txt
+compiler.c.extra_flags=-d__arm__
+compiler.c.sm8.extra_flags=
+compiler.cpp.extra_flags=-d__arm__
+compiler.S.extra_flags=
+compiler.ar.extra_flags=
+compiler.sm82hex.extra_flags=
+
+# USB Flags
+# ---------
+build.usb_flags=-dUSB_VID={build.vid} -dUSB_PID={build.pid} -dUSBCON '-dUSB_MANUFACTURER={build.usb_manufacturer}' '-dUSB_PRODUCT={build.usb_product}'
+
+# Default usb manufacturer will be replaced at compile time using
+# numeric vendor ID if available or by board's specific value.
+build.usb_manufacturer="Unknown"
+# Define standard peripheral library path
+build.series_path={build.series}{build.splibraryPrefix}
+# Build information's
+build.info.flags=-d{build.series} -dF_CPU={build.f_cpu} -dARDUINO={runtime.ide.version} -dARDUINO_{build.board} -dARDUINO_ARCH_{build.arch} -dBOARD_NAME="{build.board}"
+
+# Defaults config
+build.xSerial=
+
+
+# compile patterns
+# ---------------------
+
+## Preprocessor
+# These must be kept empty to erase Arduino preprocessor flags
+preproc.includes.flags=
+recipe.preproc.includes=
+preproc.macros.flags=
+recipe.preproc.macros="{compiler.path}{compiler.cpp.cmd}" {preproc.macros.flags} {compiler.cpp.flags} {build.info.flags} {compiler.c.extra_flags} {build.extra_flags} {includes} -sp -o "{preprocessed_file_path}" "{source_file}"
+
+## Compile c files
+recipe.c.o.pattern="{compiler.path}{compiler.c.cmd}" {compiler.c.flags} {build.info.flags} {compiler.c.extra_flags} {build.extra_flags} -o "{object_file}" {includes} "{source_file}"
+
+## Compile c++ files
+recipe.cpp.o.pattern="{compiler.path}{compiler.c.cmd}" {compiler.cpp.flags} {build.info.flags} {compiler.cpp.extra_flags} {build.extra_flags} -o "{object_file}" {includes} "{source_file}"
+
+## Compile S files
+recipe.S.o.pattern="{compiler.path}{compiler.S.cmd}" {compiler.S.flags} {build.info.flags} {compiler.S.extra_flags} {build.extra_flags} {includes} -o "{object_file}" "{source_file}"
+
+## Create archives
+recipe.ar.pattern="{compiler.path}{compiler.ar.cmd}" {compiler.ar.flags} {compiler.ar.extra_flags} "{archive_file_path}" "{object_file}"
+
+## Combine gc-sections, archives, and objects
+recipe.c.combine.pattern="{compiler.path}{compiler.c.sm8.cmd}" {compiler.c.sm8.flags} -o "{build.path}\{build.project_name}.sm8" -m "{build.path}\{build.project_name}.map" -l "{compiler.libcpp}" "{build.variant.path}\lkfscript.lkf" {object_files} "{archive_file_path}"
+
+## Create output (.hex file)
+recipe.objcopy.1hex.pattern="{compiler.path}{compiler.sm82hex.cmd}" {compiler.sm82hex.flags} {compiler.sm82hex.extra_flags} -o "{build.path}/{build.project_name}.hex" "{build.path}/{build.project_name}.sm8"
+
+## Create output (.bin file)
+recipe.objcopy.2bin.pattern="{runtime.tools.STM8Tools.path}/tools/win/{compiler.hex2bin.cmd}" {compiler.hex2bin.flags} "{build.path}/{build.project_name}.hex"
+
+## Compute size
+recipe.size.pattern="{system.path}{compiler.size.cmd}" /C type "{build.path}\\{build.project_name}.map"
+recipe.size.regex=code:\s+([0-9]+)
+recipe.size.regex.data=data:\s+([0-9]+)
+
+# Uploader tool
+# -------------------
+
+#Upload via MassStorage
+tools.massStorageCopy.path={runtime.tools.STM8Tools.path}/tools/win
+tools.massStorageCopy.cmd.windows=massStorageCopy.bat
+tools.massStorageCopy.upload.params.verbose=
+tools.massStorageCopy.upload.params.quiet=
+tools.massStorageCopy.upload.pattern="{path}/{cmd}" {upload.verbose} -I "{build.path}/{build.project_name}.bin" -O "{node}"
+
+#Upload via stm8Tools
+tools.stm8Flasher.path={runtime.tools.STM8Tools.path}/tools/win
+tools.stm8Flasher.cmd.windows=stm8Flasher.bat
+tools.stm8Flasher.upload.params.verbose=
+tools.stm8Flasher.upload.params.quiet=
+tools.stm8Flasher.upload.pattern="{path}/{cmd}" "{build.path}/{build.project_name}.hex" "{device}"
+
