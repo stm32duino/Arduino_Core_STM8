@@ -55,6 +55,7 @@ typedef struct
 {
   EXTI_Port_TypeDef EXTI_port;
   GPIO_Pin_TypeDef pin;
+  uint8_t current_level;
 #if defined(STM8Sxx)
   EXTI_Sensitivity_TypeDef EXTI_mode;
 #elif defined(STM8Lxx)
@@ -75,9 +76,9 @@ typedef struct
 
 #define NB_EXTI ((uint8_t)16)
 
-/**
-* @}
-*/
+/*As this port are not usable with exti, use dummy values*/
+#define EXTI_Port_A_Int ((uint8_t)0xFD)
+#define EXTI_Port_C_Int ((uint8_t)0xFE)
 
 /** @addtogroup stm8sxx_System_Private_Macros
 * @{
@@ -114,9 +115,9 @@ static uint8_t get_pin_id(GPIO_TypeDef *port, GPIO_Pin_TypeDef pin, uint8_t init
 */
 static uint8_t get_pin_id(GPIO_TypeDef *port, GPIO_Pin_TypeDef pin, uint8_t init)
 {
-  uint8_t id = 0xFF;
+  uint8_t id = NC;
   uint8_t i = 0;
-  EXTI_Port_TypeDef EXTI_port;
+  EXTI_Port_TypeDef EXTI_port = 0xFF;
 
 #if defined(STM8Sxx)
   if (port == GPIOA)
@@ -145,10 +146,17 @@ static uint8_t get_pin_id(GPIO_TypeDef *port, GPIO_Pin_TypeDef pin, uint8_t init
   }
 #elif defined(STM8Lxx)
   EXTI_Pin_TypeDef EXTI_pin;
-
-  if (port == GPIOB)
+ if (port == GPIOA)
+  {
+      EXTI_port = EXTI_Port_A_Int;
+  }
+  else if (port == GPIOB)
   {
     EXTI_port = EXTI_Port_B;
+  }
+  else if (port == GPIOC)
+  {
+    EXTI_port = EXTI_Port_C_Int;
   }
   else if (port == GPIOD)
   {
@@ -220,7 +228,7 @@ static uint8_t get_pin_id(GPIO_TypeDef *port, GPIO_Pin_TypeDef pin, uint8_t init
       id = i;
       break;
     }
-    else if (init == 1)
+    else if ((init == 1)&&(gpio_irq_conf[id].pin == 0))
     {
       gpio_irq_conf[id].EXTI_port = EXTI_port;
       gpio_irq_conf[id].pin = pin;
@@ -229,11 +237,9 @@ static uint8_t get_pin_id(GPIO_TypeDef *port, GPIO_Pin_TypeDef pin, uint8_t init
       gpio_irq_conf[id].port_IT = port;
       gpio_irq_conf[id].EXTI_pin = EXTI_pin;
 #endif
-        id = i;
+       break;
     }
-      break;
   }
-
   return id;
 }
 
@@ -267,38 +273,29 @@ void stm8_interrupt_enable(GPIO_TypeDef *port, GPIO_Pin_TypeDef pin,
   gpio_irq_conf[id].callback = callback;
   gpio_irq_conf[id].EXTI_mode = EXTI_mode;
 
-#if defined(STM8Sxx)
-  if ((port->CR1 & pin) == pin)
-  {
-    GPIO_mode = GPIO_MODE_IN_PU_IT;
-  }
-  else
-  {
-    GPIO_mode = GPIO_MODE_IN_FL_IT;
-  }
-#endif
-#if defined(STM8Lxx)
-  if ((port->CR1 & pin) == pin)
-  {
-    GPIO_mode = GPIO_Mode_In_PU_IT;
-  }
-  else
-  {
-    GPIO_mode = GPIO_Mode_In_FL_IT;
-  }
-#endif
-
   // Enable and set EXTI Interrupt
   disableInterrupts();
-  GPIO_Init(port, pin, GPIO_mode);
 #if defined(STM8Sxx)
-  EXTI_SetExtIntSensitivity(gpio_irq_conf[id].EXTI_port, EXTI_mode);
+  GPIO_Init(port, pin, GPIO_MODE_IN_PU_IT);
+  gpio_irq_conf[id].current_level = GPIO_ReadInputPin(port, pin);
+  EXTI_SetExtIntSensitivity(gpio_irq_conf[id].EXTI_port, EXTI_SENSITIVITY_RISE_FALL/*EXTI_mode*/);
+
 #elif defined(STM8Lxx)
-  EXTI_SetPortSensitivity(gpio_irq_conf[id].EXTI_port, EXTI_mode);
+  GPIO_Init(port, pin, GPIO_Mode_In_PU_IT);
+  gpio_irq_conf[id].current_level = GPIO_ReadInputDataBit(port, pin);
+  if(EXTI_GetPinSensitivity(gpio_irq_conf[id].EXTI_pin) != EXTI_Trigger_Rising_Falling) {
+    EXTI_SetPinSensitivity(gpio_irq_conf[id].EXTI_pin, EXTI_Trigger_Rising_Falling);
+  }
 #endif
 
   enableInterrupts();
-}
+#if defined(STM8Sxx)
+  gpio_irq_conf[id].current_level = GPIO_ReadInputPin(port, pin);
+#elif defined(STM8Lxx)
+  gpio_irq_conf[id].current_level = GPIO_ReadInputDataBit(port, pin);
+#endif
+
+  }
 
 /**
 * @brief  This function disable the interruption on the selected port/pin
@@ -364,6 +361,7 @@ void GPIO_EXTI_Callback(EXTI_IT_TypeDef EXTI_port_pin)
   GPIO_Pin_TypeDef pin;
   BitStatus status = RESET;
   uint8_t i = 0;
+  uint8_t old_level = SET;
 #if defined(STM8Sxx)
   if (EXTI_port == EXTI_PORT_GPIOA)
   {
@@ -394,18 +392,22 @@ void GPIO_EXTI_Callback(EXTI_IT_TypeDef EXTI_port_pin)
   {
     if (gpio_irq_conf[i].EXTI_port == EXTI_port)
     {
+      status = RESET;
+      old_level = gpio_irq_conf[i].current_level;
+      gpio_irq_conf[i].current_level = GPIO_ReadInputPin(port, gpio_irq_conf[i].pin);
+
       switch (gpio_irq_conf[i].EXTI_mode)
       {
       case EXTI_SENSITIVITY_FALL_LOW:
       case EXTI_SENSITIVITY_FALL_ONLY:
-        if (GPIO_ReadInputPin(port, gpio_irq_conf[i].pin) == RESET)
+        if((old_level != RESET) && (gpio_irq_conf[i].current_level == RESET))
         {
           status = SET;
         }
         break;
 
       case EXTI_SENSITIVITY_RISE_ONLY:
-        if (GPIO_ReadInputPin(port, gpio_irq_conf[i].pin) != RESET)
+        if((old_level == RESET) && (gpio_irq_conf[i].current_level != RESET))
         {
           status = SET;
         }
@@ -418,7 +420,6 @@ void GPIO_EXTI_Callback(EXTI_IT_TypeDef EXTI_port_pin)
       default:
         break;
       }
-
       if ((gpio_irq_conf[i].callback != 0) && (status == SET))
       {
         gpio_irq_conf[i].callback();
@@ -429,37 +430,9 @@ void GPIO_EXTI_Callback(EXTI_IT_TypeDef EXTI_port_pin)
 #if defined(STM8Lxx)
   EXTI_Port_TypeDef EXTI_port;
   EXTI_Pin_TypeDef EXTI_pin;
-  if (EXTI_port_pin == EXTI_IT_PortB)
-  {
-    port = GPIOB;
-    EXTI_port = EXTI_Port_B;
-  }
-  else if (EXTI_port_pin == EXTI_IT_PortD)
-  {
-    port = GPIOD;
-    EXTI_port = EXTI_Port_D;
-  }
-  else if (EXTI_port_pin == EXTI_IT_PortE)
-  {
-    port = GPIOE;
-    EXTI_port = EXTI_Port_E;
-  }
-  else if (EXTI_port_pin == EXTI_IT_PortF)
-  {
-    port = GPIOF;
-    EXTI_port = EXTI_Port_F;
-  }
-  else if (EXTI_port_pin == EXTI_IT_PortG)
-  {
-    port = GPIOG;
-    EXTI_port = EXTI_Port_G;
-  }
-  else if (EXTI_port_pin == EXTI_IT_PortH)
-  {
-    port = GPIOH;
-    EXTI_port = EXTI_Port_H;
-  }
-    else if (EXTI_port_pin == EXTI_IT_Pin0)
+  EXTI_ClearITPendingBit(EXTI_port_pin);
+
+  if (EXTI_port_pin == EXTI_IT_Pin0)
   {
     pin = GPIO_Pin_0;
     EXTI_pin = EXTI_Pin_0;
@@ -506,20 +479,24 @@ void GPIO_EXTI_Callback(EXTI_IT_TypeDef EXTI_port_pin)
 
   for (i = 0; i < NB_EXTI; i++)
   {
-    if ((gpio_irq_conf[i].EXTI_port == EXTI_port) || (gpio_irq_conf[i].EXTI_pin == EXTI_pin))
+    if (gpio_irq_conf[i].EXTI_pin == EXTI_pin)
     {
+      status = RESET;
+      old_level = gpio_irq_conf[i].current_level;
+      gpio_irq_conf[i].current_level = GPIO_ReadInputDataBit(gpio_irq_conf[i].port_IT, gpio_irq_conf[i].pin);
+
       switch (gpio_irq_conf[i].EXTI_mode)
       {
       case EXTI_Trigger_Falling_Low:
       case EXTI_Trigger_Falling:
-        if (GPIO_ReadInputDataBit(gpio_irq_conf[i].port_IT, pin) == RESET)
+        if((old_level != RESET) && (gpio_irq_conf[i].current_level == RESET))
         {
           status = SET;
         }
         break;
 
       case EXTI_Trigger_Rising:
-        if (GPIO_ReadInputDataBit(gpio_irq_conf[i].port_IT, pin) != RESET)
+        if((old_level == RESET) && (gpio_irq_conf[i].current_level != RESET))
         {
           status = SET;
         }
@@ -536,7 +513,6 @@ void GPIO_EXTI_Callback(EXTI_IT_TypeDef EXTI_port_pin)
       if ((gpio_irq_conf[i].callback != 0) && (status == SET))
       {
         gpio_irq_conf[i].callback();
-        EXTI_ClearITPendingBit(EXTI_port_pin);
       }
     }
   }
