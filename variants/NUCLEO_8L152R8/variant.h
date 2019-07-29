@@ -56,7 +56,7 @@ enum {
     PC2, //D5 PWM
     PC3, //D6 PWM
     PD1, //D7
-    PD8, //D8
+    PD3, //D8
     PC4, //D9 PWM
     PB4, //D10 SPI Clock
     PB6, //D11 SPI MOSI
