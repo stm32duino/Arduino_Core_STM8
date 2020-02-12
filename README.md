@@ -17,7 +17,7 @@ This porting is based on several external components :
   * [SPL for STM8S](https://www.st.com/en/embedded-software/stsw-stm8069.html)
 * Cosmic compiler, allowing to compile c++ source code on stm8 family (http://www.cosmic-software.com/)
 
-For now, the solution is running on Windows only.
+Solution is running on Windows only.
 
 ## Getting Started
 
