@@ -68,6 +68,38 @@ Nucleo_8L152R8.menu.upload_method.stm8Flasher.upload.protocol=stm8Tools
 Nucleo_8L152R8.menu.upload_method.stm8Flasher.upload.tool=stm8Flasher
 
 ################################################################################
+#  STM8L151Gx
+XMOTO_8L151G4.name=XMOTO_8L151G4
+
+XMOTO_8L151G4.build.core=arduino
+XMOTO_8L151G4.build.board=XMOTO_8L151G4
+XMOTO_8L151G4.build.extra_flags=-d{build.product_line} {build.xSerial}
+
+# XMOTO_8L151G4 board
+# Support: Serial1 (USART1 on PA2, PA3)
+XMOTO_8L151G4=XMOTO_8L151G4
+XMOTO_8L151G4.device=STM8L15xG4
+XMOTO_8L151G4.node=NODE_8L151
+XMOTO_8L151G4.upload.maximum_size=32768
+XMOTO_8L151G4.upload.maximum_data_size=2048
+XMOTO_8L151G4.build.mcu=8-bit
+XMOTO_8L151G4.build.board=XMOTO_8L151G4
+XMOTO_8L151G4.build.series=STM8Lxx
+XMOTO_8L151G4.build.splibraryPrefix=_StdPeriph_Driver
+XMOTO_8L151G4.build.product_line=STM8L15X_HD
+XMOTO_8L151G4.build.variant=XMOTO_8L151G4
+XMOTO_8L151G4.build.f_cpu=16000000
+
+XMOTO_8L151G4.menu.upload_method.MassStorage=Mass Storage
+XMOTO_8L151G4.menu.upload_method.MassStorage.upload.protocol=
+XMOTO_8L151G4.menu.upload_method.MassStorage.upload.tool=massStorageCopy
+
+XMOTO_8L151G4.menu.upload_method.stm8Flasher=stm8Flasher
+XMOTO_8L151G4.menu.upload_method.stm8Flasher.upload.protocol=stm8Tools
+XMOTO_8L151G4.menu.upload_method.stm8Flasher.upload.tool=stm8Flasher
+
+
+################################################################################
 # Serialx activation
 Nucleo_8S208RB.menu.xserial.generic=Enabled with generic Serial
 Nucleo_8S208RB.menu.xserial.none=Enabled without generic Serial
