@@ -1,6 +1,24 @@
 #ifndef _STM8_DEF_
 #define _STM8_DEF_
 
+/**
+ * @brief STM8 core version number
+ */
+#define STM8_CORE_VERSION_MAJOR    (0x01U) /*!< [31:24] major version */
+#define STM8_CORE_VERSION_MINOR    (0x00U) /*!< [23:16] minor version */
+#define STM8_CORE_VERSION_PATCH    (0x00U) /*!< [15:8]  patch version */
+/*
+ * Extra label for development:
+ * 0: official release
+ * [1-9]: release candidate
+ * F[0-9]: development
+ */
+#define STM8_CORE_VERSION_EXTRA    (0x00U) /*!< [7:0]  extra version */
+#define STM8_CORE_VERSION          ((STM8_CORE_VERSION_MAJOR << 24U)\
+                                        |(STM8_CORE_VERSION_MINOR << 16U)\
+                                        |(STM8_CORE_VERSION_PATCH << 8U )\
+                                        |(STM8_CORE_VERSION_EXTRA))
+
 #if defined(STM8Sxx)
 #include "stm8s.h"
 #elif defined(STM8Lxx)
