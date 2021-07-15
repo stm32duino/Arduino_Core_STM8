@@ -101,7 +101,7 @@ recipe.c.combine.pattern="{compiler.path}{compiler.c.sm8.cmd}" {compiler.c.sm8.f
 recipe.objcopy.1hex.pattern="{compiler.path}{compiler.sm82hex.cmd}" {compiler.sm82hex.flags} {compiler.sm82hex.extra_flags} -o "{build.path}/{build.project_name}.hex" "{build.path}/{build.project_name}.sm8"
 
 ## Create output (.bin file)
-recipe.objcopy.2bin.pattern="{runtime.tools.STM8Tools.path}/tools/win/{compiler.hex2bin.cmd}" {compiler.hex2bin.flags} "{build.path}/{build.project_name}.hex"
+recipe.objcopy.2bin.pattern="{runtime.tools.STM8Tools.path}/win/{compiler.hex2bin.cmd}" {compiler.hex2bin.flags} "{build.path}/{build.project_name}.hex"
 
 ## Compute size
 recipe.size.pattern="{system.path}{compiler.size.cmd}" /C type "{build.path}\\{build.project_name}.map"
@@ -112,14 +112,14 @@ recipe.size.regex.data=data:\s+([0-9]+)
 # -------------------
 
 #Upload via MassStorage
-tools.massStorageCopy.path={runtime.tools.STM8Tools.path}/tools/win
+tools.massStorageCopy.path={runtime.tools.STM8Tools.path}/win
 tools.massStorageCopy.cmd.windows=massStorageCopy.bat
 tools.massStorageCopy.upload.params.verbose=
 tools.massStorageCopy.upload.params.quiet=
 tools.massStorageCopy.upload.pattern="{path}/{cmd}" {upload.verbose} -I "{build.path}/{build.project_name}.bin" -O "{node}"
 
 #Upload via stm8Tools
-tools.stm8Flasher.path={runtime.tools.STM8Tools.path}/tools/win
+tools.stm8Flasher.path={runtime.tools.STM8Tools.path}/win
 tools.stm8Flasher.cmd.windows=stm8Flasher.bat
 tools.stm8Flasher.upload.params.verbose=
 tools.stm8Flasher.upload.params.quiet=
