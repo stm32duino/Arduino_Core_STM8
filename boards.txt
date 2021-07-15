@@ -1,4 +1,4 @@
-# See: https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5-3rd-party-Hardware-specification
+# See: https://arduino.github.io/arduino-cli/latest/platform-specification/
 
 menu.xserial=Serial interface
 menu.upload_method=Upload Method

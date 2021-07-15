@@ -3,7 +3,7 @@
 # ------------------------------
 #
 # For more info:
-# https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5-3rd-party-Hardware-specification
+# https://arduino.github.io/arduino-cli/latest/platform-specification/
 
 name = STM8 Boards
 version=1.0.0
@@ -45,7 +45,7 @@ compiler.define=-dARDUINO=
 
 system.path=C:\windows\system32\
 
-# This can be overriden in boards.txt
+# This can be overridden in boards.txt
 build.extra_flags=
 
 # These can be overridden in platform.local.txt
