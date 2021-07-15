@@ -25,7 +25,9 @@ This repo is available as a package usable with [Arduino Boards Manager](https:/
 
 Use this link in the "*Additional Boards Managers URLs*" field:
 
-https://github.com/stm32duino/BoardManagerFiles/raw/master/STM8/package_stm8_index.json
+https://github.com/stm32duino/BoardManagerFiles/raw/master/package_stmicroelectronics_index.json
+
+**Warning**: Since core release 1.0.0 this link has changed.
 
 For full instructions on using the "**Boards Manager**", see the [Getting Started](https://github.com/stm32duino/wiki/wiki/Getting-Started) page.
 
