@@ -48,7 +48,7 @@ const PinName digitalPin[] = {
     PC_2, //D5 PWM
     PC_3, //D6 PWM
     PD_1, //D7
-    PD_3, //D8
+    PD_3, //D8 PWM
     PC_4, //D9 PWM
     PE_5, //D10 SPI Clock
     PC_6, //D11 SPI MOSI
@@ -62,7 +62,7 @@ const PinName digitalPin[] = {
     PG_5, //D17
     PE_7, //D18
     PE_6, //D19
-    PA_3, //D20
+    PA_3, //D20 PWM
     PA_4, //D21
     PA_5, //D22
     PA_6, //D23
@@ -74,7 +74,7 @@ const PinName digitalPin[] = {
     // CN9 Right Side
     PB_7, //D27
     PB_6, //D28
-    PD_4, //D29
+    PD_4, //D29 PWM
     PF_7, //D30
     PF_6, //D31
     PF_5, //D32
@@ -82,7 +82,7 @@ const PinName digitalPin[] = {
     PF_3, //D34
     PF_0, //D35
     PD_2, //D36
-    PD_0, //D37
+    PD_0, //D37 PWM
     PG_1, //D38
     PE_4, //D39
     PE_3, //D40
