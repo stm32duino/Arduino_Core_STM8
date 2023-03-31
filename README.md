@@ -1,3 +1,9 @@
+# Important note
+
+**This repository has been archived as no further evolutions are planned.**
+
+**As an alternative, consider using [STM32C0xx series](https://www.st.com/en/microcontrollers-microprocessors/stm32c0-series.html) supported by the [Arduino_Core_STM32](https://github.com/stm32duino/Arduino_Core_STM32).**
+
 # Arduino core support for STM8 based boards
 [![GitHub release](https://img.shields.io/github/release/stm32duino/Arduino_Core_STM8.svg)](https://github.com/stm32duino/Arduino_Core_STM8/releases/latest)
 
@@ -53,8 +59,6 @@ We have several known issues :
  * Endianness:
  *STM8 microcontrollers are natively Big Endian whereas Arduino boards and STM32 microcontrollers are Little Endian.
 	By default, some libraries don't handle endianess, therefore these won't be directly compatible with STM8 (this is the case of SD library for example).*
-
-If you have any issue, you could [file an issue on Github](https://github.com/stm32duino/Arduino_Core_STM8/issues/new).
 
 If you have a question about compiler, you can also send a mail to Cosmic support : [send a mail to Cosmic support](mailto:support@cosmic.fr)
 
